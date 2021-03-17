@@ -5,7 +5,7 @@ import random
 distSleepers = 4
 inputCurve = 'curve1'
 startFrame = 0
-trainSpeed = 40
+trainSpeed = 300
 numCars = int(raw_input())
 rotAmp = 4
 
