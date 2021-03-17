@@ -6,7 +6,7 @@ filePath = 'C:\Users\zachw\Downloads\Mimic\Textures'
 allMats = mc.ls(materials=True)
 numMats = len(allMats)
 
-# mapTypes: string BaseColor, Metallic, Roughness
+# mapTypes: string BaseColor, Metallic, Roughness, Normal
 def InputMap(mapType):
     # Create texture file node network
     curTextureNode = mc.shadingNode('file', asTexture=True, isColorManaged=True)
@@ -31,22 +31,32 @@ def InputMap(mapType):
     mc.connectAttr(curPlaceNode+'.outUvFilterSize', curTextureNode+'.uvFilterSize')
     # connects texture file network to material
     if mapType == 'BaseColor':
-        mc.connectAttr(curTextureNode+'.outColor', matName+'.baseColor')
-        mc.setAttr(curTextureNode+'.fileTextureName', filePath+'\\'+substancePrefix+matName+"_BaseColor.png", type='string')
+        mc.connectAttr(curTextureNode+'.outColor', matName+'.baseColor', f=True)
+        mc.setAttr(curTextureNode+'.fileTextureName', filePath + '\\' + substancePrefix + matName +"_BaseColor.png",
+                   type='string')
         mc.setAttr(curTextureNode+'.colorSpace', 'sRGB', type='string')
         mc.setAttr(curTextureNode+'.alphaIsLuminance', False)
     if mapType == 'Metallic':
-        mc.connectAttr(curTextureNode + '.outAlpha', matName + '.metalness')
+        mc.connectAttr(curTextureNode + '.outAlpha', matName + '.metalness', f=True)
         mc.setAttr(curTextureNode + '.fileTextureName', filePath + '\\' + substancePrefix + matName + "_Metallic.png",
                    type='string')
         mc.setAttr(curTextureNode + '.colorSpace', 'Raw', type='string')
         mc.setAttr(curTextureNode + '.alphaIsLuminance', True)
     if mapType == 'Roughness':
-        mc.connectAttr(curTextureNode + '.outAlpha', matName + '.specularRoughness')
+        mc.connectAttr(curTextureNode + '.outAlpha', matName + '.specularRoughness', f=True)
         mc.setAttr(curTextureNode + '.fileTextureName', filePath + '\\' + substancePrefix + matName + "_Roughness.png",
                    type='string')
         mc.setAttr(curTextureNode + '.colorSpace', 'Raw', type='string')
         mc.setAttr(curTextureNode + '.alphaIsLuminance', True)
+    if mapType == 'Normal':
+        curBumpNode = mc.shadingNode('bump2d', asUtility=True)
+        mc.connectAttr(curBumpNode + '.outNormal', matName + '.normalCamera', f=True)
+        mc.connectAttr(curTextureNode + '.outAlpha', curBumpNode + '.bumpValue', f=True)
+        mc.setAttr(curBumpNode + '.bumpInterp', 1)
+        mc.setAttr(curTextureNode + '.fileTextureName', filePath + '\\' + substancePrefix + matName + "_Normal.png",
+                   type='string')
+        mc.setAttr(curTextureNode + '.colorSpace', 'Raw', type='string')
+        mc.setAttr(curTextureNode + '.alphaIsLuminance', False)
 
 
 for i in range(0, numMats):
@@ -57,3 +67,4 @@ for i in range(0, numMats):
         InputMap('BaseColor')
         InputMap('Metallic')
         InputMap('Roughness')
+        InputMap('Normal')
