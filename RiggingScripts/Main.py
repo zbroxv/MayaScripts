@@ -1,12 +1,12 @@
 import maya.cmds as mc
 
 # README: input your own info for these three variables.
-substancePrefix = 'MimicLowPolyUVs_'
+substancePrefix = 'EyesForTexturing_'
 filePath = 'C:\Users\zachw\Downloads\Mimic\Textures'
 fileType = ".png"
 
-allMats = mc.ls(materials=True)
-numMats = len(allMats)
+allMats = ["Eyes1", "EyeMuscles"]
+numMats = 2
 
 # mapTypes: string BaseColor, Metallic, Roughness, Normal
 def InputMap(mapType):
