@@ -3,7 +3,7 @@ import shutil
 
 groupsPath = '/users/animation/zmw42/Desktop/testAssets'
 
-directories = next(walk(groupsPath), (None, None, []))[1]
+directories = next(os.walk(groupsPath), (None, None, []))[1]
 
 #rename directories with the previs_previs_ mistake
 for dir in directories:
@@ -18,7 +18,7 @@ for dir in directories:
 
 #rename files with the previs_previs_ mistake and the _mesh mistake
 for dir in directories:
-    files = next(walk(groupsPath + '/' + dir), (None, None, []))[2]
+    files = next(os.walk(groupsPath + '/' + dir), (None, None, []))[2]
     if len(files) > 0:
         newFile = files[0]
         if newFile.find('previs_previs_') > -1:
