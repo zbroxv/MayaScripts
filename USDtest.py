@@ -75,8 +75,8 @@ f.close
 import os
 import shutil
 
-filePath = '/users/animation/zmw42/Desktop/allAssets.txt'
-groupsPath = '/users/animation/zmw42/Desktop/testAssets'
+publishPath = '/groups/unfamiliar/publish/layout/clusters'
+groupsPath = '/groups/unfamiliar/publish/previs/assets'
 listPath = '/users/animation/zmw42/Desktop/assetLists'
 
 clusterlists = [[], [], []]
@@ -120,10 +120,11 @@ print(clusterlists[2])
 
 for x in range(len(clusterlists[0])):
     print(clusterlists[0][x])
-    f = open(listPath + '/' + clusterlists[0][x] + '.usda', "w")
+    f = open(publishPath + '/' + clusterlists[0][x] + '.usda', "w")
     f.write(clusterlists[2][x])
     f.close
     
 f = open(listPath + '/' + 'test.txt', "w")
 f.write("bs")
 f.close
+
