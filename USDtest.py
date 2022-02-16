@@ -128,3 +128,66 @@ f = open(listPath + '/' + 'test.txt', "w")
 f.write("bs")
 f.close
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+import maya.cmds as mc
+import os
+
+groupsPath = '/groups/unfamiliar/publish/previs/assets'
+
+directories = next(os.walk(groupsPath), (None, None, []))[1]
+for dir in directories:
+    files = next(os.walk(groupsPath + '/' + dir), (None, None, []))[2]
+    if len(files) > 0:
+        filename = files[0]
+        print(filename)
+        cmds.file(groupsPath + '/' + dir + '/' + filename, i = True)
+        
+import maya.cmds as mc
+meshes = mc.ls(sl = True)
+for mesh in meshes:
+    mc.select(mesh)
+    name = mesh
+    if name.find('previs_previs_') > -1:
+        name = name[7:]
+    index = name.find('_mesh')
+    if index > -1:
+        name = name[:index]
+    shader = mc.shadingNode('usdPreviewSurface', asShader = True, n = name + '_mat')
+    mc.sets(renderable = True, noSurfaceShader = True, n = name + '_mat' + 'SG', empty = True)
+    mc.connectAttr(name + '_mat' + '.outColor', name  + '_mat' + 'SG' + '.surfaceShader')
+    mc.select(mesh)
+    mc.hyperShade(a = shader)
+
+import maya.cmds as mc
+import os
+meshes = mc.ls(sl = True)
+for mesh in meshes:
+    mc.select(mesh)
+    name = mesh
+    if name.find('previs_previs_') > -1:
+        name = name[7:]
+    index = name.find('_mesh')
+    if index > -1:
+        name = name[:index]
+    filename = groupsPath + '/' + name + '/' + name + '.usd'
+    mc.rename(mesh, name + '_mesh')
+    os.remove(filename)
+    cmds.mayaUSDExport(
+                file = filename,
+                selection=True,
+                defaultUSDFormat='usda',
+                defaultMeshScheme='none',
+                convertMaterialsTo='UsdPreviewSurface'
+            )
