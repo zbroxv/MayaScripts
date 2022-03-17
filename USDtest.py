@@ -191,3 +191,62 @@ for mesh in meshes:
                 defaultMeshScheme='none',
                 convertMaterialsTo='UsdPreviewSurface'
             )
+    
+    
+    
+    
+    
+#New layout publishing script
+import maya.cmds as mc
+import os
+
+groupsPath = '/groups/unfamiliar/publish/previs/assets'
+publishCluster = '/groups/unfamiliar/publish/layout/clusters_00/fireplace_area.usda'
+
+object = mc.ls(sl = True)
+mc.makeIdentity(a = True, t = False, r = False, s = True)
+transformation = cmds.getAttr(object[0] + '.translate')
+rotation = cmds.getAttr(object[0] + '.rotate')
+mc.move(0, 0, 0, r = False)
+mc.rotate(0, 0, 0, r = False)
+
+meshes = mc.ls(sl = True)
+for mesh in meshes:
+    mc.select(mesh)
+    name = mesh
+    if name.find('previs_previs_') > -1:
+        name = name[7:]
+    index = name.find('_mesh')
+    if index > -1:
+        name = name[:index]
+    filename = groupsPath + '/' + name + '/' + name + '.usd'
+    if not os.path.isdir(groupsPath + '/' + name):
+        os.mkdir(groupsPath + '/' + name)
+    mc.rename(mesh, name + '_mesh')
+    if os.path.isfile(filename):
+        os.remove(filename)
+    cmds.mayaUSDExport(
+                file = filename,
+                selection=True,
+                defaultUSDFormat='usda',
+                defaultMeshScheme='none',
+                convertMaterialsTo='UsdPreviewSurface'
+            )
+            
+usdRef = "def \"" + object[0] + "\" (\n    prepend references = @" + filename + "@\n)\n{\n" \
+"    float3 xformOp:rotateXYZ = (" + str(rotation[0][0]) + ", " + str(rotation[0][1]) + ", " + str(rotation[0][2]) + ")\n" \
+"    double3 xformOp:translate = (" + str(transformation[0][0]) + ', ' + str(transformation[0][1]) + ', ' + str(transformation[0][2]) + ')\n' \
+"    uniform token[] xformOpOrder = [\"xformOp:translate\", \"xformOp:translate:pivot\", \"xformOp:rotateXYZ\", \"!invert!xformOp:translate:pivot\"]" + '\n' \
+"}\n\n"
+print(usdRef)
+
+f = open(publishCluster, 'a')
+f.write(usdRef)
+f.close()
+
+f = open('/users/animation/zmw42/Desktop' + '/' + 'test.txt', "w")
+f.write("bs")
+f.close
+
+mc.move(transformation[0][0], transformation[0][1], transformation[0][2])
+mc.rotate(rotation[0][0], rotation[0][1], rotation[0][2])
